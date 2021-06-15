@@ -8,8 +8,8 @@ include install.json
 include ts*.json
 include yarn.lock
 
-graft jupyterlab-webviz/labextension
-graft jupyterlab-webviz/webviz
+graft jupyterlab_webviz/labextension
+graft jupyterlab_webviz/webviz
 
 # Javascript files
 graft src

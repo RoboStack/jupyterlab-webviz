@@ -3,6 +3,13 @@
   "title": "jupyterlab-webviz",
   "description": "jupyterlab-webviz settings.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "defaultROSEndpoint": {
+      "title": "Default ROS Endpoint",
+      "description": "Websocket URL to the default ROS endpoint",
+      "default": "ws://localhost:9090",
+      "type": "string"
+    }
+  },
   "additionalProperties": false
 }

@@ -83,7 +83,7 @@
       }
     },
     "extension": true,
-    "outputDir": "jupyterlab-webviz/labextension",
+    "outputDir": "jupyterlab_webviz/labextension",
     "schemaDir": "schema"
   }
 }

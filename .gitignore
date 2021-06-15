@@ -4,9 +4,9 @@ node_modules/
 *.egg-info/
 .ipynb_checkpoints
 *.tsbuildinfo
-jupyterlab-webviz/labextension
+jupyterlab_webviz/labextension
 
-!jupyterlab-webviz/webviz/dist/
+!jupyterlab_webviz/webviz/dist/
 
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python

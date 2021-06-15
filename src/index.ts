@@ -213,7 +213,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [IFileBrowserFactory, ILayoutRestorer],
   optional: [ISettingRegistry, ILauncher],
-  activate: (
+  activate: async (
     app: JupyterFrontEnd,
     browserFactory: IFileBrowserFactory,
     restorer: ILayoutRestorer,
@@ -222,25 +222,19 @@ const plugin: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log('JupyterLab extension jupyterlab-webviz is activated!');
 
+    let defaultROSEndpoint = 'ws://localhost:9090';
+
     if (settingRegistry) {
-      settingRegistry
-        .load(plugin.id)
-        .then(settings => {
-          console.log('jupyterlab-webviz settings loaded:', settings.composite);
-        })
-        .catch(reason => {
-          console.error(
-            'Failed to load settings for jupyterlab-webviz.',
-            reason
-          );
-        });
+      const settings = await settingRegistry.load(plugin.id);
+      defaultROSEndpoint = settings.get('defaultROSEndpoint')
+        .composite as string;
+      console.log('jupyterlab-webviz settings loaded:', settings.composite);
     }
 
     const namespace = 'jupyterlab-webviz';
     const { commands } = app;
     const tracker = new WidgetTracker<WebvizWidget>({ namespace });
 
-    const defaultROSEndpoint = 'ws://192.168.178.62:9090';
     const factory = new WebvizFactory(
       { name: FACTORY, fileTypes: ['webviz'], defaultFor: ['webviz'] },
       defaultROSEndpoint

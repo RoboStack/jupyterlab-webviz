@@ -1,6 +1,6 @@
 # jupyterlab-webviz
 
-![Github Actions Status](https://github.com/github_username/jupyterlab-webviz/workflows/Build/badge.svg)[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/github_username/jupyterlab-webviz/main?urlpath=lab)
+![Github Actions Status](https://github.com/robostack/jupyterlab-webviz/workflows/Build/badge.svg)[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/robostack/jupyterlab-webviz/main?urlpath=lab)
 
 A jupyterlab extension for webviz / robotics
 
