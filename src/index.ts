@@ -39,23 +39,27 @@ export const webvizIcon = new LabIcon({
 // global-variables // url encoded json
 
 interface IWebVizOptions {
-  rosbridgeWebsocketUrl?: string,
-  remoteBagUrl?: string,
-  seekTo?: number,
-  layout?: any
+  rosbridgeWebsocketUrl?: string;
+  remoteBagUrl?: string;
+  seekTo?: number;
+  layout?: any;
 }
 
 class WebvizIframeWidget extends IFrame {
   query: string;
 
-  trigger(webvizOptions: IWebVizOptions)
-  {
+  trigger(webvizOptions: IWebVizOptions) {
     const queryElems = [];
 
     for (const k in webvizOptions as any) {
-      let kk = k.replace(/[A-Z]/g, (letter: string) => `-${letter.toLowerCase()}`);
+      const kk = k.replace(
+        /[A-Z]/g,
+        (letter: string) => `-${letter.toLowerCase()}`
+      );
       queryElems.push(
-        encodeURIComponent(kk) + '=' + encodeURIComponent((webvizOptions as any)[k])
+        encodeURIComponent(kk) +
+          '=' +
+          encodeURIComponent((webvizOptions as any)[k])
       );
     }
     this.query = queryElems.join('&');
@@ -67,7 +71,7 @@ class WebvizIframeWidget extends IFrame {
 
   constructor(webvizOptions: IWebVizOptions) {
     super();
-    this.query = ''
+    this.query = '';
     // const queryElems = [];
     // for (const k in webvizOptions as any) {
     //   let kk = k;
@@ -110,8 +114,8 @@ class WebvizIframeWidget extends IFrame {
 }
 
 export class WebvizWidget extends DocumentWidget<WebvizIframeWidget> {
-   defaultROSEndpoint : string = "";
-   private _ready = new PromiseDelegate<void>();
+  defaultROSEndpoint = '';
+  private _ready = new PromiseDelegate<void>();
 
   constructor(
     options: DocumentWidget.IOptions<WebvizIframeWidget>,
@@ -119,25 +123,27 @@ export class WebvizWidget extends DocumentWidget<WebvizIframeWidget> {
   ) {
     super({ ...options });
     this.defaultROSEndpoint = defaultROSEndpoint;
-    this.context.ready.then(() => { this._onContextReady() });
+    this.context.ready.then(() => {
+      this._onContextReady();
+    });
     // this.context.ready.then(() => { this._handleDirtyStateNew(); });
   }
 
-  _onContentChanged() {
-
+  _onContentChanged(): void {
+    console.log('Content changed?');
   }
 
   /**
    * A promise that resolves when the zethus viewer is ready.
    */
-   get ready(): Promise<void> {
+  get ready(): Promise<void> {
     return this._ready.promise;
   }
 
-  _onContextReady() {
+  _onContextReady(): void {
     const contextModel = this.context.model;
     // if (contextModel.toString() === '') {
-      // contextModel.fromString();
+    // contextModel.fromString();
     // }
 
     // Set the editor model value.
@@ -145,8 +151,10 @@ export class WebvizWidget extends DocumentWidget<WebvizIframeWidget> {
     contextModel.contentChanged.connect(this._onContentChanged, this);
     let layout = {};
     try {
-      layout = JSON.parse(this.context.model.toString())
-    } catch (e) {}
+      layout = JSON.parse(this.context.model.toString());
+    } catch (e) {
+      // ignore
+    }
 
     this.content.trigger({
       rosbridgeWebsocketUrl: this.defaultROSEndpoint,
@@ -164,29 +172,29 @@ export class WebvizWidget extends DocumentWidget<WebvizIframeWidget> {
 /**
  * A widget factory for drawio.
  */
- export class WebvizFactory extends ABCWidgetFactory<
- WebvizWidget,
- DocumentRegistry.IModel
+export class WebvizFactory extends ABCWidgetFactory<
+  WebvizWidget,
+  DocumentRegistry.IModel
 > {
- /**
-  * Create a new widget given a context.
-  */
- constructor(
-   options: DocumentRegistry.IWidgetFactoryOptions,
-   defaultROSEndpoint: string
- ) {
-   super(options);
-   this.defaultROSEndpoint = defaultROSEndpoint;
- }
+  /**
+   * Create a new widget given a context.
+   */
+  constructor(
+    options: DocumentRegistry.IWidgetFactoryOptions,
+    defaultROSEndpoint: string
+  ) {
+    super(options);
+    this.defaultROSEndpoint = defaultROSEndpoint;
+  }
 
- protected createNewWidget(context: DocumentRegistry.Context): WebvizWidget {
-   return new WebvizWidget(
-     { context, content: new WebvizIframeWidget({}) },
-     this.defaultROSEndpoint
-   );
- }
+  protected createNewWidget(context: DocumentRegistry.Context): WebvizWidget {
+    return new WebvizWidget(
+      { context, content: new WebvizIframeWidget({}) },
+      this.defaultROSEndpoint
+    );
+  }
 
- defaultROSEndpoint: string;
+  defaultROSEndpoint: string;
 }
 
 type IWebvizTracker = IWidgetTracker<WebvizWidget>;
@@ -205,12 +213,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [IFileBrowserFactory, ILayoutRestorer],
   optional: [ISettingRegistry, ILauncher],
-  activate: (app: JupyterFrontEnd, 
+  activate: (
+    app: JupyterFrontEnd,
     browserFactory: IFileBrowserFactory,
-    restorer: ILayoutRestorer,  
+    restorer: ILayoutRestorer,
     settingRegistry: ISettingRegistry | null,
     launcher: ILauncher | null
-    ) => {
+  ) => {
     console.log('JupyterLab extension jupyterlab-webviz is activated!');
 
     if (settingRegistry) {
@@ -220,20 +229,23 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.log('jupyterlab-webviz settings loaded:', settings.composite);
         })
         .catch(reason => {
-          console.error('Failed to load settings for jupyterlab-webviz.', reason);
+          console.error(
+            'Failed to load settings for jupyterlab-webviz.',
+            reason
+          );
         });
     }
 
     const namespace = 'jupyterlab-webviz';
     const { commands } = app;
     const tracker = new WidgetTracker<WebvizWidget>({ namespace });
-  
-    let defaultROSEndpoint = 'ws://192.168.178.62:9090';
-    let factory = new WebvizFactory(
+
+    const defaultROSEndpoint = 'ws://192.168.178.62:9090';
+    const factory = new WebvizFactory(
       { name: FACTORY, fileTypes: ['webviz'], defaultFor: ['webviz'] },
       defaultROSEndpoint
     );
-  
+
     // Handle state restoration.
     restorer.restore(tracker, {
       command: 'docmanager:open',
@@ -285,10 +297,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         const cwd = browserFactory.defaultBrowser.model.path;
         return createNewWebviz(cwd);
-      },
+      }
       // isEnabled
     });
-  
+
     // app.commands.addCommand("webviz:open", {
     //   label: 'Webviz',
     //   icon: webvizIcon,
@@ -303,7 +315,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Add a launcher item if the launcher is available.
     if (launcher) {
       launcher.add({
-        command: "webviz:launch",
+        command: 'webviz:launch',
         rank: 5,
         category: 'Robotics'
       });
