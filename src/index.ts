@@ -88,6 +88,7 @@ class WebvizIframeWidget extends IFrame {
     this.id = 'Webviz';
     this.title.label = 'Webviz';
     this.title.closable = true;
+    this.title.icon = webvizIcon;
     this.node.style.overflowY = 'hidden';
     this.node.style.background = '#FFF';
 
