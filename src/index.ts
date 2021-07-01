@@ -124,10 +124,12 @@ export class WebvizWidget extends DocumentWidget<WebvizIframeWidget> {
   ) {
     super({ ...options });
     this.defaultROSEndpoint = defaultROSEndpoint;
+
+    this.title.icon = webvizIcon;
+
     this.context.ready.then(() => {
       this._onContextReady();
     });
-    // this.context.ready.then(() => { this._handleDirtyStateNew(); });
   }
 
   _onContentChanged(): void {
@@ -249,8 +251,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
     });
 
     factory.widgetCreated.connect((sender, widget) => {
-      widget.title.icon = 'jp-MaterialIcon ZethusIcon'; // TODO change
-
       // Notify the instance tracker if restore data needs to update.
       widget.context.pathChanged.connect(() => {
         tracker.save(widget);
